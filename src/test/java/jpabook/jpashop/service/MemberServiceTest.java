@@ -69,7 +69,7 @@ public class MemberServiceTest {
 
 
         //then
-//        fail("예외가 발생한다.");
+        fail("예외가 발생한다.");
 
     }
 
