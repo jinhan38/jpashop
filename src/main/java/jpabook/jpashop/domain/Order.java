@@ -24,6 +24,7 @@ public class Order {
 
     // 1대 n 관계에서 주인은 n이다
     // Member 테이블과 Order 테이블의 주인은 Order가 된다.
+    // 지연로딩인 경우 하이버네티스가 new Proxymember()를 생성한다
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;

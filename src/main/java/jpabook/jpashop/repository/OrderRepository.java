@@ -2,9 +2,9 @@ package jpabook.jpashop.repository;
 
 
 import jpabook.jpashop.domain.Order;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
@@ -25,13 +25,15 @@ public class OrderRepository {
         return em.find(Order.class, id);
     }
 
+
+    // 에러 있어서 작동 안됨
     public List<Order> findAll(OrderSearch orderSearch) {
         return em.createQuery("select o from orders o join o.member m" +
-                " where o.status = :status " +
-                " and m.name like :name", Order.class)
+                        " where o.status = :status " +
+                        " and m.name like :name", Order.class)
                 .setParameter("status", orderSearch.getOrderStatus())
                 .setParameter("name", orderSearch.getMemberName())
-                        .setMaxResults(100) // 최대 100건
+                .setMaxResults(100) // 최대 100건
                 .getResultList();
     }
 
@@ -75,4 +77,24 @@ public class OrderRepository {
         return query.getResultList();
     }
 
+
+    // fetch join
+    public List<Order> findAllWithMemberDelivery() {
+        return em.createQuery("select o from orders o" +
+                " join fetch o.member m" +
+                " join fetch o.delivery d", Order.class).getResultList();
+    }
+
+
+    //join fetch 는 페이징 처리에 사용 불가하다
+    // 1대 n의 엔티티 안에 또 1대 n이 있을 경우 distinct를 사용해야 한다.
+    // distinct를 사용하지 않으면 1 : n : n 만큼 로우가 늘어나서 return 데이터가 상당히 늘어난다
+    public List<Order> findAllWithItem() {
+        return em.createQuery("select distinct o from orders o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d" +
+                        " join fetch o.orderItems oi" +
+                        " join fetch oi.item i", Order.class)
+                .getResultList();
+    }
 }
