@@ -97,4 +97,21 @@ public class OrderRepository {
                         " join fetch oi.item i", Order.class)
                 .getResultList();
     }
+
+
+    // fetch join
+    // *가장 선호나는 방식
+    // xToOne 관게는 join fetch를 하는것이 더 효율적, 쿼리가 덜 나감
+    // 컬렉션은 지연로딩을 해야 성능 최적화가 된다
+    // hibernate.defulat_batch_fetch_size 기능을 이용해서 in query를 사용할 수 있다.
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        return em.createQuery("select o from orders o" +
+                " join fetch o.member m" +
+                " join fetch o.delivery d", Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
+
+
 }

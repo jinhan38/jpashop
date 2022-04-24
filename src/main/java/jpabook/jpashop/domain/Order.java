@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -31,6 +32,8 @@ public class Order {
 
     // CascadeType.All 로 설정하면 현재 Entity인 Order를 persist할 때
     // OrderItem 리스트도 같이 persist를 날려준다
+    // BatchSize를 별도로 세팅 할 수도 있다
+//    @BatchSize(size = 100)
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
